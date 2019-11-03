@@ -4,7 +4,6 @@ const $boardNameInput = $('#board-name');
 const $saveBoardButton = $('#save-board');
 const $boardsContainer = $('.boards');
 
-
 let user;
 
 init();
@@ -18,8 +17,7 @@ function init() {
     return;
   }
 
-  $('.welcome h1').text('Welcome ' + user.email + '!');
-
+  $('.welcome h1').text(`Welcome ${user.email}!`);
 
   getUserBoards();
 }
@@ -47,7 +45,6 @@ function renderBoards(boards) {
   $boardsContainer.append($boardTiles);
 }
 
-
 function handleBoardCreate(event) {
   event.preventDefault();
 
@@ -65,7 +62,7 @@ function handleBoardCreate(event) {
       name: boardName
     },
     method: 'POST'
-  }).then(function() {
+  }).then(function(data) {
     getUserBoards();
     MicroModal.close('create-board');
   });

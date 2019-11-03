@@ -1,6 +1,6 @@
-const $submitButton = $('#submit');
 const $setLogin = $('#login');
-const $setSignUp = $('#signup');
+const $setSignUp = $('#sign-up');
+const $submitButton = $('#submit');
 const $emailInput = $('#email');
 const $passwordInput = $('#password');
 const $message = $('#message');
@@ -13,6 +13,7 @@ function sendUserToBoards() {
   if (localStorage.getItem('user')) {
     location.replace('/boards');
   }
+}
 
 function setAuth(setting) {
   authSetting = setting;
@@ -20,10 +21,10 @@ function setAuth(setting) {
   if (authSetting === 'login') {
     $setLogin.addClass('active');
     $setSignUp.removeClass('active');
-    $submitButton.text('Log In');
+    $submitButton.text('Login');
   } else {
-    $setSignUp.addClass('active');
     $setLogin.removeClass('active');
+    $setSignUp.addClass('active');
     $submitButton.text('Sign Up');
   }
 }
@@ -35,12 +36,12 @@ function handleFormSubmit(event) {
   let password = $passwordInput.val().trim();
 
   if (!email || !password) {
-    displayMessage('Email and password fields cannot be blank.', 'danger');
+    displayMessage('Please supply a valid email and password.', 'danger');
     return;
   }
 
   $emailInput.val('');
-  $passwordInput.val('');
+   $passwordInput.val('');
 
   authenticateUser(email, password);
 }
@@ -49,10 +50,11 @@ function displayMessage(message, type) {
   $message.text(message).attr('class', type);
 }
 
-function handleSignupResponse(status) {
+function handleSignupResponse(data, status, jqXHR) {
   if (status === 'success') {
-    displayMessage('Registered successfully! You may now sign in.', 'success');
-    setAuth('login');
+    displayMessage('Resitered successfully! You may now sign in.', 'success');
+    // setAuth('login');
+    handleLoginResponse(data, status, jqXHR);
   } else {
     displayMessage(
       'Something went wrong. A user with this account may already exist.',
@@ -84,21 +86,19 @@ function authenticateUser(email, password) {
       }
     },
     method: 'POST'
-  })
-    .then(function(data, status, jqXHR) {
-      if (authSetting === 'signup') {
-        handleSignupResponse(status);
-      } else {
-        handleLoginResponse(data, status, jqXHR);
-      }
-    })
-    .catch(function(err) {
-      if (authSetting === 'signup') {
-        handleSignupResponse(err.statusText);
-      } else {
-        handleLoginResponse(err.statusText);
-      }
-    });
+  }).then( function(data, status, jqXHR) {
+    if (authSetting === 'signup') {
+      handleSignupResponse(data, status, jqXHR);
+    } else {
+      handleLoginResponse(data, status, jqXHR);
+    }
+  }).catch( function(err) {
+    if (authSetting === 'signup') {
+      handleSignupResponse(err.statusText);
+    } else {
+      handleLoginResponse(err.statusText);
+    }
+  });
 }
 
 $setLogin.on('click', setAuth.bind(null, 'login'));
