@@ -157,7 +157,7 @@ header {
   padding: 10px;
   text-align: left;
   cursor: pointer;
-  height: 100%;
+  height: auto;
   background-color: #fff;
   border-radius: 3px;
 }
